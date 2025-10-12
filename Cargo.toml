@@ -5,4 +5,6 @@ edition = "2024"
 
 [dependencies]
 log = "=0.4.28"
+simple-logging = "2.0.2"
+tokio = { version = "*", features = ["full"] }
 transmission-rpc = "0.5.0"

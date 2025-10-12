@@ -1,5 +1,3 @@
----
-
 ## 🧩 1. Arsitektur Umum Aplikasi
 
 Karena kamu ingin fitur lengkap (cari, download, jadwal, lihat file), maka desainnya bisa dibagi jadi **3 layer utama**:
