@@ -1,25 +1,6 @@
 ---
 
-## 🧠 1. Nama Proyek (Ideas)
-
-Kamu bisa pilih nama yang:
-
-- Mengandung unsur “torrent / stream / seed / peer”
-- Unik, tapi tetap mudah diingat
-  Contoh ide nama:
-
-| Gaya            | Ide Nama                                   | Arti Singkat                   |
-| --------------- | ------------------------------------------ | ------------------------------ |
-| ⚙️ Teknis       | `seedr`, `torrentd`, `rustransmit`         | menonjolkan sisi teknis        |
-| 🧩 Rusty        | `rustorrent`, `rseed`, `rustyflow`         | menonjolkan Rust               |
-| 🌀 Kreatif      | `Drip`, `Flowget`, `TorrentFox`, `BitPlan` | lebih bebas, branding-friendly |
-| 🕒 Fokus jadwal | `SchedTorrent`, `LazySeed`, `Planr`        | menekankan fitur scheduling    |
-
-> 💡 Rekomendasi saya: **`Rustorrent`** (gabungan _Rust_ + _Torrent_), simpel dan mudah diingat.
-
----
-
-## 🧩 2. Arsitektur Umum Aplikasi
+## 🧩 1. Arsitektur Umum Aplikasi
 
 Karena kamu ingin fitur lengkap (cari, download, jadwal, lihat file), maka desainnya bisa dibagi jadi **3 layer utama**:
 
@@ -40,7 +21,7 @@ Karena kamu ingin fitur lengkap (cari, download, jadwal, lihat file), maka desai
 
 ---
 
-## ⚙️ 3. Komponen & Fungsionalitas
+## ⚙️ 2. Komponen & Fungsionalitas
 
 | Fitur                                  | Implementasi di Rust                                                                                 |
 | -------------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -55,7 +36,7 @@ Karena kamu ingin fitur lengkap (cari, download, jadwal, lihat file), maka desai
 
 ---
 
-## 🧱 4. Implementasi Bertahap (Roadmap)
+## 🧱 3. Implementasi Bertahap (Roadmap)
 
 | Tahap    | Fitur Utama             | Deskripsi                                               |
 | -------- | ----------------------- | ------------------------------------------------------- |
@@ -68,7 +49,7 @@ Karena kamu ingin fitur lengkap (cari, download, jadwal, lihat file), maka desai
 
 ---
 
-## 🔧 5. Contoh Struktur Proyek
+## 🔧 4. Contoh Struktur Proyek
 
 ```
 rustorrent/
@@ -90,7 +71,7 @@ rustorrent/
 
 ---
 
-## 📡 6. Contoh Kode Awal
+## 📡 5. Contoh Kode Awal
 
 ```rust
 use transmission_rpc::TransClient;
@@ -117,7 +98,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ---
 
-## 🔒 7. Potensi Pengembangan Lanjut
+## 🔒 6. Potensi Pengembangan Lanjut
 
 - Autentikasi user (JWT) jika versi web
 - Integrasi search API dengan caching
