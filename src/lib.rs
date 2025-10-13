@@ -1,1 +1,1 @@
-pub mod torrent_handler;
+pub mod torrent;
