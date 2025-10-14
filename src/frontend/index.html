@@ -5,48 +5,110 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Alfath Torrent</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2563EB', // blue-600
+            secondary: '#1E293B', // slate-800
+            accent: '#10B981', // green-500
+          },
+        },
+      },
+    };
+  </script>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex items-start justify-center py-10">
-  <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-4xl">
-    <header class="mb-6 text-center">
-      <h1 class="text-2xl font-bold">Torrent Search</h1>
-      <p class="text-sm text-gray-600 mt-1">Search for legal torrents and add them to your download list.</p>
-    </header>
+<body class="bg-secondary text-gray-100 min-h-screen flex flex-col items-center py-10">
 
-    <form method="get" action="/search" class="flex gap-3 mb-4">
-      <input type="search" name="q" value="{{ q }}" placeholder="Example: linux iso, public domain music..."
-        class="flex-grow p-2 border rounded" required>
-      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Search</button>
+  <!-- Header -->
+  <header class="text-center mb-8">
+    <h1 class="text-4xl font-extrabold text-white tracking-tight">⚡ Alfath Torrent</h1>
+    <p class="text-gray-400 mt-2 text-sm">Fast • Clean • Simple Torrent Search Engine</p>
+  </header>
+
+  <!-- Search Box -->
+  <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-5xl">
+    <form method="get" action="/search" class="flex flex-col sm:flex-row gap-3 mb-6">
+      <input type="search" name="q" value="{{ q }}" placeholder="Search something... (e.g. ubuntu, public domain movies)"
+        class="flex-grow p-3 rounded-md bg-gray-900 border border-gray-700 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+        required>
+      <button type="submit"
+        class="px-5 py-3 bg-primary text-white font-semibold rounded-md hover:bg-blue-700 transition">Search</button>
     </form>
 
+    <!-- Stats -->
     {% if results and results|length > 0 %}
-      <h2 class="text-lg font-semibold mb-2">Results ({{ results|length }})</h2>
-      <table class="w-full border-collapse">
-        <thead>
-          <tr class="bg-gray-100 text-left text-sm text-gray-600">
-            <th class="p-2">Name</th>
-            <th class="p-2">Size</th>
-            <th class="p-2">Seeds</th>
-            <th class="p-2">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for r in results %}
-            <tr class="border-b hover:bg-gray-50">
-              <td class="p-2">{{ r.name }}</td>
-              <td class="p-2">{{ r.size }}</td>
-              <td class="p-2">{{ r.seeders }}</td>
-              <td class="p-2">
-                <a href="{{ r.magnet }}" class="text-blue-600 underline" target="_blank">Open Magnet</a>
-              </td>
+      <div class="flex justify-between items-center mb-4 text-sm text-gray-400">
+        <span>Found <span class="font-bold text-white">{{ results|length }}</span> results</span>
+        <span>⏱ {{ time|round(2) }}s</span>
+      </div>
+
+      <!-- Results Table -->
+      <div class="overflow-x-auto rounded-lg border border-gray-700">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-900 text-gray-400 uppercase text-xs">
+            <tr>
+              <th class="p-3 text-left w-2/5">Name</th>
+              <th class="p-3 text-left">Size</th>
+              <th class="p-3 text-left">Seeders</th>
+              <th class="p-3 text-left">Leechers</th>
+              <th class="p-3 text-left">Actions</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="divide-y divide-gray-700">
+            {% for r in results %}
+              <tr class="hover:bg-gray-700/30 transition">
+                <td class="p-3 font-medium text-white">
+                  <a href="{{ r.url }}" target="_blank" class="hover:text-primary transition">{{ r.name }}</a>
+                </td>
+                <td class="p-3 text-gray-300">{{ r.size }}</td>
+                <td class="p-3">
+                  <span class="px-2 py-1 rounded bg-green-700/30 text-green-400 font-semibold text-xs">
+                    {{ r.seeders }}
+                  </span>
+                </td>
+                <td class="p-3">
+                  <span class="px-2 py-1 rounded bg-red-700/30 text-red-400 font-semibold text-xs">
+                    {{ r.leechers }}
+                  </span>
+                </td>
+                <td class="p-3 flex flex-wrap gap-2">
+                  <a href="{{ r.magnet }}" class="px-3 py-1 bg-primary rounded-md text-white text-xs font-medium hover:bg-blue-700 transition" target="_blank">Magnet</a>
+                  <a href="{{ r.torrent_url }}" class="px-3 py-1 bg-accent rounded-md text-white text-xs font-medium hover:bg-green-600 transition" target="_blank">.torrent</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {% if total_pages and total_pages > 1 %}
+      <div class="flex justify-center mt-6 space-x-2">
+        {% if current_page and current_page > 1 %}
+          <a href="/search?q={{ q }}&page={{ current_page - 1 }}" class="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-md">← Prev</a>
+        {% endif %}
+        <span class="px-4 py-2 bg-gray-900 rounded-md text-gray-400">Page {{ current_page }} / {{ total_pages }}</span>
+        {% if current_page and total_pages and current_page < total_pages %}
+          <a href="/search?q={{ q }}&page={{ current_page + 1 }}" class="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-md">Next →</a>
+        {% endif %}
+      </div>
+      {% endif %}
+
     {% else %}
-      <div class="text-sm text-gray-500">No results yet. Try searching something!</div>
+      <div class="text-center py-10 text-gray-400">
+        <p class="text-lg">💡 No results yet.</p>
+        <p class="text-sm mt-1">Try searching for something like <code class="text-primary">ubuntu</code> or <code class="text-primary">public domain movies</code>.</p>
+      </div>
     {% endif %}
   </div>
+
+  <!-- Footer -->
+  <footer class="mt-10 text-gray-600 text-xs text-center">
+    <p>⚡ Alfath Torrent &copy; 2025 — Built with Rust 🦀 + TailwindCSS 💨</p>
+  </footer>
+
 </body>
 </html>
 
