@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rust Tiny Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center"
+  >
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+      <h1 class="text-2xl font-bold mb-4 text-center">Rust Embedded Web UI</h1>
+
+      <form method="post" action="/" class="space-y-4">
+        <div>
+          <label for="text" class="block text-sm font-medium text-gray-700"
+            >Masukkan teks:</label
+          >
+          <input
+            type="text"
+            id="text"
+            name="text"
+            placeholder="Ketik sesuatu..."
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+        >
+          Submit
+        </button>
+      </form>
+
+      {% if message != "" %}
+      <div class="mt-6 p-4 bg-green-100 border border-green-300 rounded">
+        <p class="font-semibold text-green-800">Pesan yang kamu kirim:</p>
+        <p class="text-gray-700 mt-1">{{ message }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
