@@ -1,7 +1,7 @@
-use alfath_torrent::server::init::init_server;
+use alfath_torrent::alfath_torrent_lib::init::init_service;
 
-//#[tokio::main]
-fn main() {
-    //   init_service().await;
-    init_server();
+#[tokio::main]
+async fn main() {
+    init_service().await;
+    //    init_server();
 }

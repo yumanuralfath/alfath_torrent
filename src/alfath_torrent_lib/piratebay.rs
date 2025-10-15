@@ -1,30 +1,10 @@
+use crate::alfath_torrent_lib::{
+    structure::{PirateBayResult, TorrentInfo},
+    utils::humanize_size,
+};
 use reqwest::blocking::Client;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::time::Instant;
-
-#[derive(Debug, Serialize)]
-pub struct TorrentInfo {
-    pub name: String,
-    pub size: String,
-    pub seeders: String,
-    pub leechers: String,
-    pub category: String,
-    pub uploader: String,
-    pub date: String,
-    pub url: String,
-    pub hash: String,
-    pub magnet: String,
-    pub torrent_url: String,
-}
-
-#[derive(Debug, Serialize)]
-pub struct PirateBayResult {
-    pub data: Vec<TorrentInfo>,
-    pub total: usize,
-    pub time: f64,
-    pub current_page: Option<u32>,
-    pub total_pages: Option<u32>,
-}
 
 #[derive(Debug, Deserialize)]
 struct ApiBayItem {
@@ -102,20 +82,17 @@ impl PirateBay {
                 continue;
             }
 
-            // ✅ Human readable size converter
             let size_str = match item.size.clone().unwrap_or_default().parse::<f64>() {
                 Ok(bytes) if bytes > 0.0 => humanize_size(bytes),
                 _ => "Unknown".to_string(),
             };
 
-            // Magnet link
             let magnet = format!(
                 "magnet:?xt=urn:btih:{}&dn={}&tr=udp://tracker.openbittorrent.com:80",
                 hash,
                 urlencoding::encode(&name)
             );
 
-            // ✅ Direct .torrent download link
             let torrent_url = format!("https://itorrents.org/torrent/{hash}.torrent");
 
             results.push(TorrentInfo {
@@ -152,18 +129,4 @@ impl Default for PirateBay {
     fn default() -> Self {
         Self::new()
     }
-}
-
-/// ✅ Fungsi helper untuk ubah byte jadi human readable
-fn humanize_size(bytes: f64) -> String {
-    let units = ["B", "KB", "MB", "GB", "TB"];
-    if bytes <= 0.0 {
-        return "0 B".to_string();
-    }
-
-    let i = (bytes.ln() / 1024f64.ln()).floor() as usize;
-    let i = i.min(units.len() - 1);
-
-    let value = bytes / 1024f64.powi(i as i32);
-    format!("{:.2} {}", value, units[i])
 }

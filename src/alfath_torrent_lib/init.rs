@@ -1,13 +1,13 @@
 use log::LevelFilter;
 use log::{error, info};
 use simplelog::*;
-use std::fs::{self, OpenOptions, metadata, remove_file};
-use std::io::{self, Result};
-use std::path::Path;
+use std::fs::OpenOptions;
 use std::process::Command;
-use transmission_rpc::{TransClient, types};
 
-use crate::torrent::folder::{get_log_dir, get_torrents_dir, set_log_dir, set_torrents_dir};
+use crate::alfath_torrent_lib::folder::{
+    get_log_dir, get_torrents_dir, set_log_dir, set_torrents_dir,
+};
+use crate::alfath_torrent_lib::utils::{check_log_size, check_transmission, ensure_dir};
 
 pub async fn init_service() {
     set_log_dir("./log").await;
@@ -41,26 +41,6 @@ pub async fn init_service() {
     }
 }
 
-fn ensure_dir<P: AsRef<Path>>(path: P) -> io::Result<()> {
-    let dir = path.as_ref();
-
-    if dir.exists() {
-        if dir.is_dir() {
-            println!(
-                "Directory '{}' already exists. Continuing...",
-                dir.display()
-            );
-        } else {
-            eprintln!("Path '{}' exists but is not a directory!", dir.display());
-        }
-    } else {
-        fs::create_dir_all(dir)?;
-        println!("Directory '{}' created successfully.", dir.display());
-    }
-
-    Ok(())
-}
-
 fn init_logger(log_path: &str) {
     let file = OpenOptions::new()
         .create(true)
@@ -70,7 +50,9 @@ fn init_logger(log_path: &str) {
 
     let mut builder = ConfigBuilder::new();
     builder
-        .set_time_format_custom(format_description!("[hour]:[minute]:[second]"))
+        .set_time_format_custom(format_description!(
+            "[day]/[month]/[year] [hour]:[minute]:[second]"
+        ))
         .set_level_padding(LevelPadding::Right);
 
     let config = match builder.set_time_offset_to_local() {
@@ -90,28 +72,4 @@ fn init_logger(log_path: &str) {
     .unwrap();
 
     log::info!("Logger initialized, writing to {log_path}");
-}
-
-fn check_log_size(path: &Path) -> Result<()> {
-    let metadata = metadata(path)?;
-    let size = metadata.len();
-
-    info!("log Size: {size} byte");
-
-    if size >= 100 {
-        match remove_file(path) {
-            Ok(_) => info!("File {} successfully remove", path.display()),
-            Err(e) => error!("Faield to remove file {}: {e}", path.display()),
-        }
-    }
-    Ok(())
-}
-
-async fn check_transmission() -> types::Result<()> {
-    let url = "http://localhost:9091/transmission/rpc".parse().unwrap();
-    let mut client = TransClient::new(url);
-
-    client.session_stats().await?;
-
-    Ok(())
 }
